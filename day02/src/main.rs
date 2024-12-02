@@ -14,28 +14,14 @@ fn main() {
 }
 
 fn is_valid(input: &Vec<u32>) -> bool {
-    if !input.is_sorted() && !input.iter().rev().is_sorted() {
-        return false;
-    }
-
-    if input.windows(2).all(|x| {
-        let n = x[0].abs_diff(x[1]);
-        n >= 1 && n <= 3
-    }) {
-        return true;
-    };
-
-    false
+    (input.is_sorted() || input.iter().rev().is_sorted())
+        && input
+            .windows(2)
+            .all(|x| (1..4).contains(&x[0].abs_diff(x[1])))
 }
 
 fn part1(input: &Vec<Vec<u32>>) -> u32 {
-    let mut result = 0;
-    for row in input.clone() {
-        if is_valid(&row) {
-            result += 1;
-        }
-    }
-    result
+    input.iter().filter(|row| is_valid(row)).count() as u32
 }
 
 fn part2(input: &Vec<Vec<u32>>) -> u32 {
