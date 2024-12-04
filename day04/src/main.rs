@@ -33,17 +33,15 @@ fn part1(input: &T2DVec) -> u32 {
 fn part2(input: &T2DVec) -> u32 {
     let mut result: u32 = 0;
     for (y, _) in input.iter().enumerate() {
-        for (x, c) in input[y as usize].iter().enumerate() {
+        for (x, c) in input[y].iter().enumerate() {
             if c == &'A' {
                 if y == 0 || y == input.len() - 1 || x == 0 || x == input[0].len() - 1 {
                     continue;
                 }
             
-                let word1: Vec<char> = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]];
-                let word2: Vec<char> = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]];            
-                let w1 = word1.iter().collect::<String>();
-                let w2 = word2.iter().collect::<String>();
-
+                let w1:String = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]].iter().collect();
+                let w2: String = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]].iter().collect();            
+            
                 if (w1 == "MAS" || w1 == "SAM") && (w2 == "MAS" || w2 == "SAM") {
                     result += 1;
                 }                
