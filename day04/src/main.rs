@@ -29,12 +29,24 @@ fn part1(input: &T2DVec) -> u32 {
     result / 2
 }
 
+#[rustfmt::skip]
 fn part2(input: &T2DVec) -> u32 {
     let mut result: u32 = 0;
     for (y, _) in input.iter().enumerate() {
         for (x, c) in input[y as usize].iter().enumerate() {
             if c == &'A' {
-                result += make_mas(input, (x as i32, y as i32));
+                if y == 0 || y == input.len() - 1 || x == 0 || x == input[0].len() - 1 {
+                    continue;
+                }
+            
+                let word1: Vec<char> = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]];
+                let word2: Vec<char> = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]];            
+                let w1 = word1.iter().collect::<String>();
+                let w2 = word2.iter().collect::<String>();
+
+                if (w1 == "MAS" || w1 == "SAM") && (w2 == "MAS" || w2 == "SAM") {
+                    result += 1;
+                }                
             }
         }
     }
@@ -62,48 +74,6 @@ fn make_word(input: &T2DVec, (x, y): Coords) -> u32 {
         if word.iter().collect::<String>() == "XMAS" || word.iter().collect::<String>() == "SAMX" {
             result += 1;
         }
-    }
-    result
-}
-
-fn make_mas(input: &T2DVec, (x, y): Coords) -> u32 {
-    let diag1 = vec![(-1, -1), (1, 1)];
-    let diag2 = vec![(1, -1), (-1, 1)];
-
-    let (mut new_x, mut new_y) = (x, y);
-    let mut result: u32 = 0;
-
-    let mut word1: Vec<char> = vec!['A'];
-    let mut word2: Vec<char> = vec!['A'];
-
-    for (vx, vy) in diag1 {
-        (new_x += vx, new_y += vy);
-        if new_x >= 0
-            && new_x < input[y as usize].len().try_into().unwrap()
-            && new_y >= 0
-            && new_y < input.len().try_into().unwrap()
-        {
-            word1.push(input[new_y as usize][new_x as usize]);
-        }
-        (new_x = x, new_y = y);
-    }
-
-    for (vx, vy) in diag2 {
-        (new_x += vx, new_y += vy);
-        if new_x >= 0
-            && new_x < input[y as usize].len().try_into().unwrap()
-            && new_y >= 0
-            && new_y < input.len().try_into().unwrap()
-        {
-            word2.push(input[new_y as usize][new_x as usize]);
-        }
-        (new_x = x, new_y = y);
-    }
-
-    let w1 = word1.iter().collect::<String>();
-    let w2 = word2.iter().collect::<String>();
-    if (w1 == "AMS" || w1 == "ASM") && (w2 == "AMS" || w2 == "ASM") {
-        result += 1;
     }
     result
 }
