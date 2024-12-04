@@ -39,8 +39,8 @@ fn part2(input: &T2DVec) -> u32 {
                     continue;
                 }
             
-                let w1:String = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]].iter().collect();
-                let w2: String = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]].iter().collect();            
+                let w1: String = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]].iter().collect();
+                let w2: String = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]].iter().collect();
             
                 if (w1 == "MAS" || w1 == "SAM") && (w2 == "MAS" || w2 == "SAM") {
                     result += 1;
