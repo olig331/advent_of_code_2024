@@ -64,7 +64,7 @@ fn make_word(input: &T2DVec, (x, y): Coords) -> u32 {
         word.push(input[y as usize][x as usize]);
         for _ in 1..=3 {
             (new_x += dir.0, new_y += dir.1);
-            if new_x >= 0 && new_x < input[y as usize].len().try_into().unwrap() && new_y >= 0 && new_y < input.len().try_into().unwrap() {
+            if new_x >= 0 && new_x < input[0].len() as i32 && new_y >= 0 && new_y < input.len() as i32 {
                 word.push(input[new_y as usize][new_x as usize]);
                 continue;
             }
