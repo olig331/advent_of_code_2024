@@ -51,7 +51,7 @@ fn part1(input: &Vec<(u64, Vec<u64>)>) -> u64 {
                 .reduce(|a, b| match test.next().unwrap() {
                     '*' => a * b,
                     '+' => a + b,
-                    _ => panic!(""),
+                    _ => 0,
                 })
                 .unwrap();
 

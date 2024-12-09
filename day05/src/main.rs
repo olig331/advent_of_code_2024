@@ -1,15 +1,19 @@
 use itertools::Itertools;
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fs, time::Instant};
 
 type TData = (HashMap<String, Vec<String>>, Vec<Vec<String>>);
 
 fn main() {
-    let (map, print_orders) = parse_input("input.txt");
-    let (p1_result, failures) = part1(&map, print_orders);
-    let p2_result = part2(&map, failures);
+    let p1_bench = Instant::now();
+    let (rules, print_orders) = parse_input("input.txt");
+    let (p1_result, failures) = part1(&rules, print_orders);
 
-    println!("Part 1 - {}", p1_result);
-    println!("Part 2 - {}", p2_result);
+    println!("Part 1 - {} || Took {:?}", p1_result, p1_bench.elapsed());
+
+    let p2_bench = Instant::now();
+    let p2_result = part2(&rules, failures);
+
+    println!("Part 2 - {} || Took {:?}", p2_result, p2_bench.elapsed());
 }
 
 fn parse_input(path: &str) -> TData {
@@ -20,12 +24,12 @@ fn parse_input(path: &str) -> TData {
         .map(|s| s.to_string())
         .collect::<Vec<String>>();
 
-    input[0].split("\n\n").for_each(|po| {
-        let pages = po.split("|").collect::<Vec<&str>>();
-        match map.get_mut(pages[0]) {
-            Some(matched) => matched.push(pages[1].to_string()),
+    input[0].split("\n").for_each(|po| {
+        let rule = po.split("|").collect::<Vec<&str>>();
+        match map.get_mut(rule[0]) {
+            Some(matched) => matched.push(rule[1].to_string()),
             None => {
-                map.insert(pages[0].to_string(), vec![pages[1].to_string()]);
+                map.insert(rule[0].to_string(), vec![rule[1].to_string()]);
             }
         };
     });
@@ -44,13 +48,13 @@ fn parse_input(path: &str) -> TData {
     (map, print_orders)
 }
 
-fn check_order(map: &HashMap<String, Vec<String>>, print_order: &Vec<String>) -> bool {
+fn check_order(rules: &HashMap<String, Vec<String>>, print_order: &Vec<String>) -> bool {
     let mut passed = true;
     for (index, key) in print_order.iter().enumerate() {
         if index == print_order.len() - 1 {
             break;
         }
-        match map.get(key) {
+        match rules.get(key) {
             Some(matched) => {
                 for next in &print_order[index + 1..print_order.len()] {
                     if matched.contains(&next) {
@@ -70,14 +74,14 @@ fn check_order(map: &HashMap<String, Vec<String>>, print_order: &Vec<String>) ->
 }
 
 fn part1(
-    map: &HashMap<String, Vec<String>>,
+    rules: &HashMap<String, Vec<String>>,
     print_orders: Vec<Vec<String>>,
 ) -> (u32, Vec<Vec<String>>) {
     let mut result: u32 = 0;
     let mut failures = Vec::new();
 
     for order in print_orders {
-        if check_order(&map, &order) {
+        if check_order(&rules, &order) {
             let idx: usize = order.len() / 2;
             result += order[idx].parse::<u32>().unwrap();
         } else {
@@ -88,7 +92,7 @@ fn part1(
 }
 
 #[rustfmt::skip]
-fn part2(map: &HashMap<String, Vec<String>>, failures: Vec<Vec<String>>) -> u32 {
+fn part2(rules: &HashMap<String, Vec<String>>, failures: Vec<Vec<String>>) -> u32 {
     let mut result = 0;
 
     for failure in failures {
@@ -96,12 +100,12 @@ fn part2(map: &HashMap<String, Vec<String>>, failures: Vec<Vec<String>>) -> u32 
         let mut passed = false;
 
         while !passed {
-            'swap_and_retry: for (update_index, map_key) in failure.iter().enumerate() {
+            'swap_and_retry: for (update_index, rule_key) in failure.iter().enumerate() {
                 if update_index == failure.len() - 1 {
                     passed = true;
                     break;
                 }
-                match map.get(map_key) {
+                match rules.get(rule_key) {
                     Some(pages) => {
                         for next_page in &failure[update_index + 1..failure.len()] {
                             if pages.contains(&next_page) {
@@ -139,15 +143,15 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let (map, print_orders) = parse_input(TEST_INPUT_PATH);
-        let (result, _) = part1(&map, print_orders);
+        let (rules, print_orders) = parse_input(TEST_INPUT_PATH);
+        let (result, _) = part1(&rules, print_orders);
         assert_eq!(result, 143);
     }
 
     #[test]
     fn test_part2() {
-        let (map, print_orders) = parse_input(TEST_INPUT_PATH);
-        let (_, failures) = part1(&map, print_orders);
-        assert_eq!(part2(&map, failures), 123);
+        let (rules, print_orders) = parse_input(TEST_INPUT_PATH);
+        let (_, failures) = part1(&rules, print_orders);
+        assert_eq!(part2(&rules, failures), 123);
     }
 }

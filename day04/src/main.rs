@@ -21,12 +21,12 @@ fn part1(input: &T2DVec) -> u32 {
     let mut result: u32 = 0;
     for (y, _) in input.iter().enumerate() {
         for (x, c) in input[y as usize].iter().enumerate() {
-            if c == &'S' || c == &'X' {
+            if c == &'X' {
                 result += make_word(input, (x as i32, y as i32));
             }
         }
     }
-    result / 2
+    result
 }
 
 #[rustfmt::skip]
@@ -38,7 +38,7 @@ fn part2(input: &T2DVec) -> u32 {
                 if y == 0 || y == input.len() - 1 || x == 0 || x == input[0].len() - 1 {
                     continue;
                 }
-            
+                    
                 let w1: String = vec![input[(y - 1) as usize][(x - 1) as usize], 'A', input[(y + 1) as usize][(x + 1) as usize]].iter().collect();
                 let w2: String = vec![input[(y + 1) as usize][(x - 1) as usize], 'A', input[(y - 1) as usize][(x + 1) as usize]].iter().collect();
             
