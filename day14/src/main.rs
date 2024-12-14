@@ -1,5 +1,7 @@
 use itertools::*;
 use std::fs;
+use std::fs::File;
+use std::io::Write;
 
 type Coords = (i64, i64);
 
@@ -114,12 +116,24 @@ fn part2() -> u32 {
     let mut robots = parse_input("input.txt");
     let len = robots.len();
     let mut iteration = 1;
+    let mut file = File::create("pic.txt").expect("Failed to create file...");
+
     loop {
         for r in &mut robots {
             r.move_robot();
         }
         let count = count_touching(&robots);
         if count > len {
+            let mut grid = [['.'; WIDTH as usize]; HEIGHT as usize];
+            for r in robots {
+                grid[r.pos.1 as usize][r.pos.0 as usize] = '#';
+            }
+
+            for row in grid {
+                writeln!(file, "{}", row.map(|r| r.to_string()).join(""))
+                    .expect("Failed to write...");
+            }
+
             break;
         }
         iteration += 1;
